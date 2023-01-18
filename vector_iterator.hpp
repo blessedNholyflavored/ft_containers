@@ -24,8 +24,6 @@ namespace ft{
     template <class Iterator>
 class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, Iterator> //j'herite des iterateurs random access (car vector et non pas bidirectionnel pour map), de la class iterator que jai creer
 {
-    protected:
-        Iterator _it;
 
     public:
 	typedef Iterator		                                            iterator_type;
@@ -35,13 +33,24 @@ class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, Iter
     typedef typename ft::iterator_traits<Iterator>::reference           reference;
     typedef typename ft::iterator_traits<Iterator>::iterator_category   iterator_category;
     
-
-    // all categories : constructeur, constructeur de copie,  destrcteur + les incremeteurs i++ et ++i
+    protected:
+        Iterator _it;
+    
+    public:
     //les constructeurs
     //vector_iterator(void) : _it() { }
     explicit vector_iterator( const Iterator& it ) : _it(it) { }
     vector_iterator(vector_iterator  &test) : _it(test.base()) { }
-    ~vector_iterator() { };
+    ~vector_iterator() { }
+
+    // template pr lui donner un type
+    template <typename type>
+        vector_iterator(const vector_iterator <type> &x) : _it(x.base()) { }
+
+    iterator_type base() const
+    {
+        return _it;
+    }
 
     vector_iterator	&operator=(const vector_iterator &content)
     {
@@ -58,10 +67,21 @@ class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, Iter
     {
         return _it;
     }
-    
+
+    reference operator[](const difference_type& n) const
+    {
+        return this->_it[n];
+    }
+
     vector_iterator& operator++()
     {
         _it++; 
+        return (*this);
+    }  
+       
+    vector_iterator& operator--()
+    {
+        --_it; 
         return (*this);
     }  
     
@@ -71,59 +91,84 @@ class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, Iter
         ++(*this); 
         return (tmp);
     }
-    iterator_type base() const
-    {
-        return _it;
+
+    vector_iterator operator--(int) 
+    { 
+        vector_iterator tmp = *this; 
+        --(*this); 
+        return (tmp);
     }
 
     vector_iterator operator+(const difference_type& n) const
     {
         return vector_iterator(_it + n);
     }
+    vector_iterator operator-(const difference_type& n) const
+    {
+        return vector_iterator(_it - n);
+    }
 
-    // om mets les fonctions pour :
+    vector_iterator &operator+=(const difference_type& n)
+	{
+		_it += n;
+		return *this;
+	}
 
-    // input :
-    // a == b
-    // a != b
-    // a*
-    // a->m
-
-    //output :
-    // *a = t
-    // +a++ = t
-
-    //bidirectionel
-    // X a;
-    // X()
-    // --a
-    // a--
-    // *a--
-
-    // random access:
-    // a + n
-    // n + a
-    // a - n
-    // a - b
-    // a < b
-    // a > b
-    // a <= b
-    // a >= b
-    // a += n
-    // a -= n
-    // a[n]
+    vector_iterator &operator-=(const difference_type& n)
+    {
+		_it -= n;
+		return *this;
+	}
+ 
 
 };
+
+//https://en.cppreference.com/w/cpp/language/operators
 template <typename L, typename R>
-		bool operator==(const vector_iterator<L> &left, const vector_iterator<R> &right) {
-			return left.base() == right.base();
-		}
+    bool operator==(const vector_iterator<L> &left, const vector_iterator<R> &right) {
+        return left.base() == right.base();
+    }
 
 	template<typename L, typename R>
 		bool operator!=(const vector_iterator<L> &left, const vector_iterator<R> &right) {
 			return left.base() != right.base();
 	}
+    
+    template<typename L, typename R>
+		bool operator<(const vector_iterator<L> &left, const vector_iterator<R> &right) {
+			return left.base() < right.base();
+	}
+
+    template<typename L, typename R>
+		bool operator>(const vector_iterator<L> &left, const vector_iterator<R> &right) {
+			return left.base() > right.base();
+	}
+
+    template<typename L, typename R>
+		bool operator>=(const vector_iterator<L> &left, const vector_iterator<R> &right) {
+			return left.base() >= right.base();
+	}
+
+    template<typename L, typename R>
+		bool operator<=(const vector_iterator<L> &left, const vector_iterator<R> &right) {
+			return left.base() <= right.base();
+	}
+
+// cest pa des booleans lesoperateurs arithmetik
+    template<typename L, typename R>
+    typename vector_iterator <L>::difference_type operator-(const vector_iterator<L> &left, const vector_iterator<R> &right)
+    {
+        return (left.base() - right.base());
+    }
+
+    template <typename L>
+    vector_iterator <L> operator+(const vector_iterator<L> &left, typename vector_iterator<L>::difference_type n)
+    {
+        return (vector_iterator<L>(left.base() + n));
+    }
+
 }
 
 #endif
+
 

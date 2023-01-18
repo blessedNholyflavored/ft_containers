@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include "vector_iterator.hpp"
+#include "vector_reverse_iterator.hpp"
+#include <stdexcept>      // std::out_of_range
 
 namespace ft{
 
@@ -31,8 +33,8 @@ class vector
         typedef typename Alloc::const_pointer       const_pointer;        
         typedef ft::vector_iterator<pointer> 		iterator;
 		typedef ft::vector_iterator<const_pointer> 	const_iterator;
-        //typedef reverse_iterator 
-        //typedef const reserver iterator
+        typedef ft::vector_reverse_iterator<iterator> 		reverse_iterator;
+		typedef ft::vector_reverse_iterator<const_iterator> const_reverse_iterator;
 		typedef std::ptrdiff_t 						difference_type;
         typedef std::size_t                              size_type;
     
@@ -78,7 +80,7 @@ class vector
     // destructeurs
     ~vector()
     {
-        //clear();
+       // clear();
         for (size_t i = 0; i < _size; i++){
             _alloc.destroy(&_arr[i]);
         }
@@ -86,6 +88,7 @@ class vector
             _alloc.deallocate(_arr, _capacity);
     }
 
+    //operateurs assignations
     vector & operator=( const vector & copy )
     {
         this->_alloc = copy._alloc;
@@ -95,11 +98,63 @@ class vector
         return (*this);
     }
     
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+    // ELEMENT ACCESSSSSS
     reference operator[](size_type n)
     { 
         return this->_arr[n]; 
     }
 
+    const_reference operator[](size_type n) const 
+    {
+        return this->_arr[n];
+    }
+
+ 
+    reference front()
+    {
+        return (this->_arr[0]);
+    }
+
+    const_reference front() const
+    {
+        return (this->_arr[0]);
+    }
+
+    reference back() 
+    {
+        return(this->_arr[_size - 1]);
+    }
+
+    const_reference back() const
+    {
+        return(this->_arr[_size - 1]);
+    }
+    
+    reference at (size_type n)
+    {
+        if (n >= _size)
+            throw std::out_of_range("error out of range");
+        return(this->_arr[n]);
+    }
+    
+    const_reference at (size_type n) const
+    {
+        if (n >= _size)
+            throw std::out_of_range("error out of range");
+        return(this->_arr[n]);
+    }
+
+    
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
     // iterators
     iterator begin(void) 
     { 
@@ -121,7 +176,35 @@ class vector
         return const_iterator(_arr + _size); 
     }
 
-    // faire pareil pour reverse iterator
+    reverse_iterator rbegin(void)
+    { 
+        return reverse_iterator(end());
+    }
+	
+    reverse_iterator rend(void) 
+    { 
+        return reverse_iterator(begin());
+    }
+
+	const_reverse_iterator rbegin() const 
+    {
+         return const_reverse_iterator(end());
+    }
+	
+    const_reverse_iterator rend() const 
+    {
+        return const_reverse_iterator(begin()); 
+    }
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//// MODIFIERS
+    void clear()
+    {
+        for (size_t i = 0; i < _size; i++)
+            _alloc.destroy(&_arr[i]);
+        _size = 0;
+    }
 
     void push_back(const T& x)
 	{
@@ -132,6 +215,23 @@ class vector
 		_alloc.construct(&_arr[_size], x);
 		_size++;
 	}
+
+    //ASSIGN
+    //POP BACK
+    //INSERT
+    //ERASE
+    //SWAP
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//////CAPACITY
+
+    //SIZE
+    //MAX SIZE
+    //RESIZE
+    //CAPACITY
+    //EMPTY
+    //RESERVE
 
 };
 
