@@ -15,6 +15,7 @@
 #include "vector_iterator.hpp"
 #include <iostream>
 #include <stdexcept>      // std::out_of_range
+#include "lexicographical.hpp"
 
 
 #define RED     "\033[31m"      
@@ -132,6 +133,45 @@ int main()
     std::cout << '\n';
     std::cout << YELLOW << "test de empty()" << std::endl;
     std::cout <<BOLDWHITE << "empty():  " << myvector.empty() << std::endl;
+
+    ft::vector<int> first;
+    ft::vector<int> second;
+    ft::vector<int> third;
+
+    first.assign (7,100);             // 7 ints with a value of 100
+
+    ft::vector<int>::iterator ite = first.begin()+1;
+
+    second.assign (ite,first.end() - 1); // the 5 central values of first
+
+    std::cout << YELLOW << "Size of first (7,100) : " << int (first.size()) << '\n';
+       for (unsigned i=0; i<first.size(); ++i)
+    std::cout << BOLDWHITE << ' ' << first[i];
+    std::cout << std::endl;
+    std::cout << YELLOW << "Size of second (ite,first.end() - 1): " << int (second.size()) << '\n';
+    for (unsigned i=0; i<second.size(); ++i)
+    std::cout << BOLDWHITE << ' ' << second[i];
+    std::cout << std::endl;
+    
+
+    std::cout << YELLOW << "test de insert 1" << std::endl;
+//  ft::vector<int> vec =  {1,2,3,4,5};
+     myvector.insert(myvector.begin(), 10);//Inserting 10 to the myvectortor
+	 for (unsigned i=0; i<myvector.size(); ++i)
+    std::cout << BOLDWHITE << ' ' << myvector[i];
+
+
+ ft::vector<int> myvector5;
+  
+  for (int i=1; i<=10; i++) myvector5.push_back(i);
+    std::cout << YELLOW << "test de insert2" << std::endl;
+//  ft::vector<int> vec =  {1,2,3,4,5};
+     myvector5.insert(myvector5.begin(), 2, 6);//Inserting 10 to the myvectortor
+	 for (unsigned i=0; i<myvector5.size(); ++i)
+    std::cout << BOLDWHITE << ' ' << myvector5[i];
+	
+
+
 
   return 0;
 

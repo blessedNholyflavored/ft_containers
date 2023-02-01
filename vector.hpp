@@ -17,8 +17,17 @@
 #include "vector_iterator.hpp"
 #include "vector_reverse_iterator.hpp"
 #include <stdexcept>      // std::out_of_range
+#include "isintegral.hpp"
+#include "enableif.hpp"
+#include "lexicographical.hpp"
+
+// a supprimer
+#include <memory>
+
 
 namespace ft{
+
+
 
 template < class T, class Alloc = std::allocator<T> > 
 class vector
@@ -63,9 +72,17 @@ class vector
         for (size_type i = 0; i < n; i++)
 				this->_alloc.construct(&this->_arr[i], val);
     }
-    
-    //range : template <class InputIterator>         vector (InputIterator first, InputIterator last,                 const allocator_type& alloc = allocator_type());
 
+    //range
+    // on assigne chqe truc au bon truc qui correspond
+    template <class InputIterator>   
+    //5) Constructs the container with the contents of the range [first, last).      
+    vector (InputIterator first, InputIterator last,const allocator_type& alloc = allocator_type()) : _size(ft::distance(first, last)), _capacity(_size), _alloc(alloc), _arr(_alloc.allocate(_capacity))
+    {
+        for (size_type i = 0; i < _size; i++)
+            _alloc.construct(&_arr[i], *(first++));
+    }
+    
     // copy
     vector(const vector& copy)
     {
@@ -92,8 +109,6 @@ class vector
     }
 
    
-
-
     //operateurs assignations
     vector & operator=( const vector & copy )
     {
@@ -221,18 +236,32 @@ class vector
 		_size++;
 	}
 
+    //Replaces the contents with copies of those in the range [first, last). The behavior is undefined if either argument is an iterator into *this.
+    template <class InputIterator>  
+	void assign(InputIterator first, typename enable_if<!is_integral<InputIterator>::value, InputIterator>::type last)
+    {
+        size_type n = 0;
+        for (InputIterator it = first; it != last; ++it) // remplace std::distance
+            n++;
+        clear();
+        if (n)
+            reserve(static_cast<size_type>(n));
+        size_type i = 0;
+        for (InputIterator it = first; it != last; it++)
+            _alloc.construct(&_arr[i++], *it);
+        _size = n;
 
-    //ASSIGN
-   
-    // template <class InputIterator>  
-    //void assign (InputIterator first, InputIterator last)
-    // {
-        
-    // }
-    // void assign (size_type n, const value_type& val)
-    // {
-        
-    // }
+    }
+
+    void assign(size_type n, const T& val)
+    {
+        clear();
+        if (n)
+            this->reserve(n);
+        for (size_t i = 0; i < n; i++)
+            push_back(val);
+        this->_size = n;
+    }
 
     //POP BACK
     void pop_back()
@@ -240,17 +269,80 @@ class vector
 			iterator it = end() - 1;
 			erase(it);
 	}
-    //INSERT
+    
+    // faut creer un nouveau truc, tu copy tt de begin a ta position, 
+    // puis les (ou la) valeurs
+    // puis ce qu'il y a après dans ton nouveau truc,
+    // et derrière tu destroy et deallocate l'ancien et
+    // tu remplace tes iterateurs /fpointeurs end et begin par ceux du nouveau truc quoi (+ change de size)
+ 
+ 
+//     INSERT
+//    1-2) inserts value before pos.
+//`returns : 1-2) Iterator pointing to the inserted value.
+iterator insert(iterator position, const T& val)
+{
+        difference_type i = ft::distance(begin(), position);
+		reserve(_capacity + 1);
+		position = begin() + i;
+		iterator it = end();
+		for (; it != position; it--)
+		{
+			_alloc.construct(&(*it), *(it - 1));
+			_alloc.destroy(&(*(it - 1)));
+		}
+		_alloc.construct(&(*it), val);
+		_size++;
+		return position;
+}
 
+
+	// {
+		// if (count == 0)
+			// return ;
+		// difference_type i = ft::distance(begin(), pos);
+		// reserve(_container_size + count);
+		// pos = begin() + i;
+		// for (iterator it = end() - 1; it != pos - 1; it--)
+		// {
+			// this->_allocator.construct(&(*(it + count)), *it);
+			// this->_allocator.destroy(&(*it));
+		// }
+		// for (size_type i = 0; i < count; i++)	{
+			// this->_allocator.construct(&(*pos), value);
+			// pos++;
+		// }
+		// _container_size++;
+        // return position;
+        // 
+void insert(iterator position, size_type n, const T& val)
+{
+    if (n == 0)
+			return ;
+		difference_type i = ft::distance(begin(), position);
+		reserve(_size + n);
+		position = begin() + i;
+		for (iterator it = end() - 1; it != position - 1; it--)
+		{
+			this->_alloc.construct(&(*(it + n)), *it);
+			this->_alloc.destroy(&(*it));
+		}
+		for (size_type i = 0; i < n; i++)	{
+			this->_alloc.construct(&(*position), val);
+			position++;
+		}
+		_size++;
+}
+
+// 3/ template <class InputIterator>
+// void insert(iterator position, InputIterator first, InputIterator last);
 
     //ERASE
     /*Erases the specified elements from the container.
 1) Removes the element at pos.
 2) Removes the elements in the range [first, last).
 Invalidates iterators and references at or after the point of the erase, including the end() iterator.
-
 The iterator pos must be valid and dereferenceable. Thus the end() iterator (which is valid, but is not dereferenceable) cannot be used as a value for pos.
-
 The iterator first does not need to be dereferenceable if first == last: erasing an empty range is a no-op.
 
 */
@@ -275,6 +367,8 @@ The iterator first does not need to be dereferenceable if first == last: erasing
     }
 
     //SWAP
+ 
+
     void swap(vector& x)
     {
         pointer	tmp_arr = x._arr;
@@ -379,24 +473,55 @@ The function throws length_error if n is greater than max_size.
 
 
 // non member fonctions
-template <class T, class Allocator>
-bool operator==(const vector<T,Allocator>& first, const vector<T,Allocator>& last)
-{
-    if (first.size() != last.size())
-        return false;
-    for (size_t i = 0; i < first.size(); i++)
+    template <class T, class Allocator>
+    bool operator==(const vector<T,Allocator>& first, const vector<T,Allocator>& last)
     {
-        if (first[i] != last[i])
+        if (first.size() != last.size())
             return false;
+        for (size_t i = 0; i < first.size(); i++)
+        {
+            if (first[i] != last[i])
+                return false;
+        }
+        return true;
     }
-    return true;
-}
+
+    template <class T, class Allocator>
+    bool operator!=(const vector<T,Allocator>& first,const vector<T,Allocator>& last)
+    {
+        return !(first == last);
+    }
+    
+    	template <class T, class Allocator>
+	bool operator>=(const ft::vector<T,Allocator>& x, const ft::vector<T,Allocator>& y)
+	{
+		return !(x < y);
+	}
+	
+	template <class T, class Allocator>
+	bool operator<=(const ft::vector<T,Allocator>& x, const ft::vector<T,Allocator>& y)
+	{
+		return (!(x > y));
+	}
+
+   	template <class T, class Allocator>
+	bool operator< (const vector<T,Allocator>& x, const vector<T,Allocator>& y)
+	{
+		return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+	}
+    // on compare selon deux range
 
 template <class T, class Allocator>
-bool operator!=(const vector<T,Allocator>& first,const vector<T,Allocator>& last)
-{
-    return !(first == last);
-}
+	bool operator> (const ft::vector<T,Allocator>& x, const ft::vector<T,Allocator>& y)
+	{
+		return lexicographical_compare(y.begin(), y.end(), x.begin(), x.end());
+	}
+
+   template <class T, class Allocator>
+    void swap(ft::vector<T,Allocator>& x, ft::vector<T,Allocator>& y)
+    {
+        x.swap(y);
+    }
 
 
 }

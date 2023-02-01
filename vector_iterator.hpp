@@ -155,17 +155,20 @@ template <typename L, typename R>
 	}
 
 // cest pa des booleans lesoperateurs arithmetik
-    template<typename L, typename R>
-    typename vector_iterator <L>::difference_type operator-(const vector_iterator<L> &left, const vector_iterator<R> &right)
-    {
-        return (left.base() - right.base());
-    }
+ 
 
-    template <typename L>
-    vector_iterator <L> operator+(const vector_iterator<L> &left, typename vector_iterator<L>::difference_type n)
-    {
-        return (vector_iterator<L>(left.base() + n));
-    }
+// template< class Iter >
+// reverse_iterator<Iter> operator+( typename reverse_iterator<Iter>::difference_type n, const reverse_iterator<Iter>& it );
+    	template<typename Iter> ///////////////// M
+		vector_iterator<Iter> operator+(typename vector_iterator<Iter>::difference_type n, const vector_iterator<Iter> &right) {
+			return vector_iterator<Iter>(right.base() + n);
+		}
+
+	template< typename L, typename R>
+		typename vector_iterator<L>::difference_type operator-(const vector_iterator<L> &left, const vector_iterator<R> &right) {
+			return (left.base() - right.base());
+		}
+
 
 }
 

@@ -47,6 +47,17 @@ namespace ft{
 
         //basique???
     };
+    template<class InputIterator>
+    typename iterator_traits<InputIterator>::difference_type distance (InputIterator first, InputIterator last)
+    {
+        typename iterator_traits<InputIterator>::difference_type tmp = 0;
+        while (first != last)
+        {
+            first++;
+            tmp++;
+        }
+        return (tmp);
+    }
 
     template <class T>
     class iterator_traits<T*>
