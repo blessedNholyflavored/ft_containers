@@ -33,18 +33,21 @@ namespace ft{
     
         public:
         // constructeurs
-        vector_reverse_iterator() { }
+
+        vector_reverse_iterator() : _it(NULL) { }
         explicit vector_reverse_iterator( Iterator x ) : _it(x){ }
         template<class U>
-        vector_reverse_iterator( const vector_reverse_iterator<U>& other)  : _it(other.base()){ }
+        vector_reverse_iterator(  vector_reverse_iterator<U> const& other)  : _it(other.base()){ }
+        ~vector_reverse_iterator() { }
 
-        // operateurs=====================
-        template< class U >
-        vector_reverse_iterator& operator=( const vector_reverse_iterator<U>& other ) 
-        {
-            _it = other.base();
-			return *this;
-         }
+
+        // // operateurs=====================
+        // template< class U >
+        // vector_reverse_iterator& operator=( const vector_reverse_iterator<U>& other ) 
+        // {
+        //     _it = other.base();
+		// 	return *this;
+        //  }
 
         //base
         iterator_type base() const 
@@ -87,7 +90,7 @@ namespace ft{
         vector_reverse_iterator operator++(int) 
         { 
             vector_reverse_iterator tmp = *this; 
-            --(*this);
+            ++(*this);
             //++(*this); 
             return (tmp);
         }
@@ -95,7 +98,7 @@ namespace ft{
         vector_reverse_iterator operator--(int) 
         { 
             vector_reverse_iterator tmp = *this; 
-            ++(*this); 
+            --(*this); 
             // --(*this); 
             return (tmp);
         }
@@ -121,7 +124,8 @@ namespace ft{
 			_it += n;
 			return *this;
 		}
-    // non member functions
+    // non member functions iciiiii
+    
     };
         template< class Iterator1, class Iterator2 >
         bool operator==( const vector_reverse_iterator<Iterator1>& lhs, const vector_reverse_iterator<Iterator2>& rhs )

@@ -38,7 +38,7 @@ class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, Iter
     
     public:
     //les constructeurs
-    //vector_iterator(void) : _it() { }
+    vector_iterator(void) : _it() { }
     explicit vector_iterator( const Iterator& it ) : _it(it) { }
     vector_iterator(vector_iterator  &test) : _it(test.base()) { }
     ~vector_iterator() { }
@@ -120,7 +120,6 @@ class vector_iterator : public ft::iterator<ft::random_access_iterator_tag, Iter
 		return *this;
 	}
  
-
 };
 
 //https://en.cppreference.com/w/cpp/language/operators
