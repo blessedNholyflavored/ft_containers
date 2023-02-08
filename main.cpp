@@ -16,7 +16,7 @@
 #include <iostream>
 #include <stdexcept>      // std::out_of_range
 #include "lexicographical.hpp"
-
+#include "stack.hpp"
 
 #define RED     "\033[31m"      
 #define BOLDGREEN   "\033[1m\033[32m"      
@@ -252,50 +252,92 @@
 
 //   return 0;
 
-//  }
-int		main(void)
+// //  }
+// int		main(void)
+// {
+// 	ft::vector<int> vct(10);
+// 	ft::vector<int> vct2;
+// 	ft::vector<int> vct3;
+
+// 	for (unsigned long int i = 0; i < vct.size(); ++i)
+// 		vct[i] = (vct.size() - i) * 3;
+// 	// printSize(vct);
+
+// 	 for (unsigned i=0; i<vct.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct[i];
+// 	std::cout << " GOOOOD" << std::endl;
+
+
+// 	vct2.insert(vct2.end(), 42);
+// 	vct2.insert(vct2.begin(), 2, 21);
+// // 	// printSize(vct2);
+// 	 for (unsigned i=0; i<vct2.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct2[i];
+//  	std::cout << std::endl;
+
+// 	vct2.insert(vct2.end() - 2, 42);
+// 	// printSize(vct2);
+//  for (unsigned i=0; i<vct2.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct2[i];
+// 	std::cout << std::endl;
+
+// 	vct2.insert(vct2.end(), 2, 84);
+// 	// printSize(vct2);
+// 		 for (unsigned i=0; i<vct2.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct2[i];
+// 	std::cout << std::endl;
+
+// 	vct2.resize(4);
+// 	// printSize(vct2);
+// 	 for (unsigned i=0; i<vct2.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct2[i];
+// 	std::cout << std::endl;
+
+// 	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
+// 	vct.clear();
+// 	// printSize(vct2);
+// 	  for (unsigned i=0; i<vct2.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct2[i];
+// 	std::cout << std::endl;
+
+// 	// printSize(vct);
+
+// 	for (int i = 0; i < 5; ++i)
+// 		vct3.insert(vct3.end(), i);
+// 	vct3.insert(vct3.begin() + 1, 2, 111);
+// 	// printSize(vct3);
+// 	  for (unsigned i=0; i<vct3.size(); ++i)
+//     std::cout << BOLDWHITE << ' ' << vct3[i];
+
+
+
+// 	// vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
+// 	//  vct.clear();
+
+// 	// printSize(vct);
+
+// 	// for (int i = 0; i < 5; ++i)
+// 	// 	vct3.insert(vct3.end(), i);
+// 	// vct3.insert(vct3.begin() + 1, 2, 111);
+// 	// 	  for (unsigned i=0; i<vct3.size(); ++i)
+//     // std::cout << BOLDWHITE << ' ' << vct3[i];
+
+// 	return (0);
+// }
+
+
+int main()
 {
-	ft::vector<int> vct(10);
-	ft::vector<int> vct2;
-	ft::vector<int> vct3;
+    ft::stack<int> luna;
+    luna.push(10);
+    luna.push(1);
+    luna.push(133);
+    luna.push(44);
+    luna.push(12);
+    luna.push(11);
+    // for (unsigned i=0; `i<luna.size(); ++i)
+    std::cout << luna.top() << std::endl;
+    luna.pop();
+    std::cout << luna.top() << std::endl;
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
-  for (unsigned i=0; i<vct.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct[i];
-	// printSize(vct);
-
-	vct2.insert(vct2.end(), 42);
-	vct2.insert(vct2.begin(), 2, 21);
-  for (unsigned i=0; i<vct2.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct2[i];
-
-	vct2.insert(vct2.end() - 2, 42);
-  for (unsigned i=0; i<vct2.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct2[i];
-
-  vct2.insert(vct2.end(), 2, 84);
-	  for (unsigned i=0; i<vct2.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct2[i];
-
-   vct2.resize(4);
-		  for (unsigned i=0; i<vct2.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct2[i];
-
-	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
-	vct.clear();
-		  for (unsigned i=0; i<vct2.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct2[i];
-
-
-	// printSize(vct);
-
-	for (int i = 0; i < 5; ++i)
-		vct3.insert(vct3.end(), i);
-	vct3.insert(vct3.begin() + 1, 2, 111);
-	// printSize(vct3);
-		  for (unsigned i=0; i<vct3.size(); ++i)
-    std::cout << BOLDWHITE << ' ' << vct2[i];
-
-	return (0);
 }

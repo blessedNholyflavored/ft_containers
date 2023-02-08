@@ -102,7 +102,8 @@ class vector
     ~vector()
     {
        // clear();
-        for (size_t i = 0; i < _size; i++){
+        for (size_t i = 0; i < _size; i++)
+        {
             _alloc.destroy(&_arr[i]);
         }
         if (_arr != NULL)
@@ -114,18 +115,23 @@ class vector
 
    
     //operateurs assignations
-    vector & operator=( const vector & x )
+    vector & operator=( const vector &copy)
     {
-        if (this != &x)
+        if (copy._arr)
         {
-            this->_alloc = x._alloc;
-			assign(x.begin(), x.end());
-            //insert(begin(), x.begin(), x.end());
-            // this->_arr = x._arr;
-            // this->_size = x._size;
-            // this->_capacity = x._capacity;
+            for (size_t i = 0; i < _size; i++){
+                _alloc.destroy(&_arr[i]);
+            }
+            _alloc.deallocate(_arr, _capacity);
+            _size = 0;
+            _alloc = copy._alloc;
+            _size = copy._size;
+            _capacity = copy._capacity; // isize?
+            _arr = _alloc.allocate(_capacity); //._arr; // check icic
+            for (size_type i = 0; i < _size; i++)
+                _alloc.construct(&_arr[i], copy._arr[i]);  
         }
-        return (*this);
+        return (*this); 
     }
     
  
@@ -277,9 +283,9 @@ class vector
     {
          if (size() > 0)
         {
-		// 	iterator it = end() - 1;
-		// 	erase(it);
-			_size--;
+         	iterator it = end() - 1;
+		 	erase(it);
+		//	_size--;
         }
     }
     
@@ -288,7 +294,7 @@ class vector
     // puis ce qu'il y a après dans ton nouveau truc,
     // et derrière tu destroy et deallocate l'ancien et
     // tu remplace tes iterateurs /fpointeurs end et begin par ceux du nouveau truc quoi (+ change de size)
- 
+
  
 //     INSERT
 //    1-2) inserts value before pos.
@@ -313,58 +319,40 @@ iterator insert(iterator position, const T& val)
 // 3/ template <class InputIterator>
 // void insert(iterator position, InputIterator first, InputIterator last);
 
-
 void insert(iterator position, size_type n, const T& val)
 {
-    if (n == 0)
-			return ;
 		difference_type i = ft::distance(begin(), position);
-		reserve(_size + n);
-		position = begin() + i;
-		for (iterator it = end() - 1; it != position - 1; it--)
+        long long j = i;        
+        if ((_size > n) + _capacity)
 		{
-			this->_alloc.construct(&(*(it + n)), *it);
-			this->_alloc.destroy(&(*it));
-		}
-		for (size_type i = 0; i < n; i++)	{
-			this->_alloc.construct(&(*position), val);
-			position++;
-		}
-		_size++;
+            if (n > _size)
+                reserve(_size + n);
+            else
+                reserve(_capacity * 2);
+        }
+        else if (_size == 0)
+            reserve(n);
+        // position = begin() + i;
+		for (long long it = _size - 1; it >= j; it--) // != position - 1; it--)
+        {
+			this->_alloc.construct(&_arr[it + n], _arr[it]);
+			this->_alloc.destroy(&_arr[it]);
+        }
+		for (size_type i = 0; i < n; i++)	
+			this->_alloc.construct(&(_arr[j++]), val);
+		_size += n;
 }
 
 
+
 template <class InputIterator> 
-	void insert(iterator position, InputIterator first, InputIterator last,  typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
-    // void    insert(iterator position, InputIterator first, InputIterator last, typename enable_if<!is_integral<InputIterator>::value,InputIterator >::type = InputIterator())
+void insert(iterator position, InputIterator first, InputIterator last,  typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+{
+    for (InputIterator it = first; it != last; it++)
     {
-    difference_type lol = 0;
-    for (InputIterator it = first; it != last; ++it) // remplace std::distance
-        lol++;
-    // difference_type lol1 = 0;
-//    for (InputIterator it = begin(); it != position; ++it) // remplace std::distance
-        // lol1++;
-    difference_type i = ft::distance(begin(), position);
-    //difference_type range = ft::distance(first, last);
-    int j = i;
-    size_t n = lol;
-    if ((_size + n) > _capacity)
-    {
-        if (_size > n)
-    		reserve(_capacity + n);
-        else
-            reserve(_capacity * 2);
+        position = insert(position, *it);
+        position++;
     }
-    else if (_size == 0)
-        reserve(n);
-    for (int i = _size - 1; i >= j; i--)
-        _alloc.construct(&_arr[i +n], _arr[i]);
-    for (size_type i = 0; i < n; i++)
-    {
-        _alloc.construct(&_arr[j++], *first);
-        first++;
-    }
-    _size += n;
 }
 
     //ERASE
@@ -383,8 +371,8 @@ The iterator first does not need to be dereferenceable if first == last: erasing
 			_alloc.destroy(_arr + i);
 			_alloc.construct(_arr + i, *(_arr + i + 1));
 		}
-		_size--;
 		_alloc.destroy(_arr + _size - 1);
+		_size--;
 		return (iterator(_arr + dist));
 	}
     
@@ -485,7 +473,7 @@ The function throws length_error if n is greater than max_size.
             vector reserv = *this;
             size_type tmp_size = _size;
             size_type tmp_capacity = _capacity;
-            pointer old_arr = _arr;
+            pointer tmp_arr = _arr;
             clear();
             _capacity = n;
             if (_capacity)
@@ -494,7 +482,7 @@ The function throws length_error if n is greater than max_size.
             for (size_type i = 0; i < _size; i++) {
                 _alloc.construct(&_arr[i], reserv[i]);
             }
-            _alloc.deallocate(old_arr, tmp_capacity);
+            _alloc.deallocate(tmp_arr, tmp_capacity);
         }
     }
 };
