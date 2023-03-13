@@ -1,10 +1,10 @@
 NAME		=	contaaaainers
 
-SRCS		=	main.cpp \
+SRCS		=	mainmap.cpp \
 
 OBJS		=	$(SRCS:.cpp=.o)
 CC			=	c++
-FLAGS		=	-Wall -Wextra -Werror -std=c++98
+FLAGS		=	-Wall -Wextra -Werror -std=c++98 -g3
 INC_PATH	=	-I./incs
 COMPILE		=	$(CC) $(FLAGS) $(INC_PATH)
 

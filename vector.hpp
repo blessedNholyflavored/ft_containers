@@ -186,7 +186,10 @@ class vector
         return this->_arr[n];
     }
 
-    
+    allocator_type get_allocator() const 
+    {
+        return this->_alloc; 
+    }
 
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
@@ -318,6 +321,7 @@ iterator insert(iterator position, const T& val)
 
 // 3/ template <class InputIterator>
 // void insert(iterator position, InputIterator first, InputIterator last);
+
 
 void insert(iterator position, size_type n, const T& val)
 {
