@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   map.hpp                                            :+:      :+:    :+:   */
+/*   set.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lkhamlac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 16:22:43 by lkhamlac          #+#    #+#             */
-/*   Updated: 2023/02/09 16:22:45 by lkhamlac         ###   ########.fr       */
+/*   Updated: 2023/04/07 18:48:32 by lkhamlac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAP_HPP
-#define MAP_HPP
+#ifndef SET_HPP
+#define SET_HPP
 
 #include <functional>   // std::less
 #include <iostream>
@@ -21,11 +21,11 @@
 #include "vector_iterator.hpp"
 #include "lexicographical.hpp"
 #include "iterator_traits.hpp"
-#include "rbt.hpp"
+#include "rbtset.hpp"
 
 namespace ft {
-template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > > 
-class map
+template< class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
+class set
 {
 
      template <class U, class V>
@@ -168,21 +168,21 @@ typedef V node_pointer;
 };
 
     public:
-    typedef Key 								key_type; //1er parametre
+    typedef T   								key_type; //1er parametre
     typedef T 									mapped_type; // deuxieme param
-    typedef pair<const key_type, mapped_type> 	value_type; // pair ?????????/
+    typedef T 	value_type; // pair ?????????/
     //typedef ft::pair<const key_type, const mapped_type> 	const_value_type; pair ?????????
     typedef Compare 							key_compare; // troisieme param
     typedef Allocator 							allocator_type; //4emeeee
 
     public:
 
-    /*std::map::value_compare is a function object that compares objects of type std::map::value_type 
+    /*std::set::value_compare is a function object that compares objects of type std::set::value_type 
     (key-value pairs) by comparing of the first components of the pairs. */
-    // en gros c pour savoir, apres comparaison, quel est l'element sera entre en premier entre first et second ds map
+    // en gros c pour savoir, apres comparaison, quel est l'element sera entre en premier entre first et second ds set
     class value_compare 
     {   
-        friend class map; // askip faut mettre ca ds la norme iso 
+        friend class set; // askip faut mettre ca ds la norme iso 
         protected:
             Compare _comp; // le comparateur stocke
            // value_compare(Compare c) : _comp(c) { } // compare deux valeurs de type value_type
@@ -199,7 +199,7 @@ typedef V node_pointer;
 
         bool operator()(const value_type& x, const value_type& y) const
         { 
-            return _comp(x.first, y.first);
+            return _comp(x, y);
         }
     };
 
@@ -213,9 +213,9 @@ typedef V node_pointer;
 
     public:
     // typedef TreeNode<value_type>* 												        NodePtr;//
-	typedef typename ft::rbtree<value_type, mapped_type, key_type, key_compare, allocator_type>::template TreeNode<value_type>* 		NodePtr;
-	typedef typename ft::rbtree<value_type, mapped_type, key_type, key_compare, allocator_type>::template TreeNode<value_type> 		Node;
-	typedef rbtree<value_type, mapped_type, key_type, key_compare, allocator_type> 		rbtree;
+	typedef typename ft::rbtreeset<value_type, key_compare, allocator_type>::template TreeNode<value_type>* 		NodePtr;
+	typedef typename ft::rbtreeset<value_type, key_compare, allocator_type>::template TreeNode<value_type>   		Node;
+	typedef rbtreeset<value_type, key_compare, allocator_type> 		rbtree;
     typedef typename allocator_type::template rebind<Node>::other                       type_allocator;
     typedef typename allocator_type::reference                                          reference;
     typedef typename allocator_type::const_reference                                    const_reference;
@@ -225,13 +225,13 @@ typedef V node_pointer;
 	typedef size_t 								                                        size_type;
 
     //iterator
-	typedef rbt_iterator<value_type, NodePtr>							                iterator;
 	typedef rbt_iterator< const value_type, NodePtr> 						            const_iterator;
+	typedef const_iterator							                iterator;
     typedef ft::vector_reverse_iterator<iterator>			                            reverse_iterator;
 	typedef ft::vector_reverse_iterator<const_iterator>	                                const_reverse_iterator;
 
     public:
-    rbtree          _rbtree;
+    rbtree         _rbtree;
 
     private:
     value_compare   _value_compare;
@@ -244,11 +244,11 @@ typedef V node_pointer;
 
 
     public :
-    // map() {} 
-    //explicit map(const Compare& comp = Compare(),const Allocator& = Allocator())
-	//explicit map(void) : _rbtree(rbtree()), _value_compare(value_compare()), _comp(key_compare()), _alloc(allocator_type()), _size(0), _flag(0) {} //_trollalloc(type_allocator())
+    // set() {} 
+    //explicit set(const Compare& comp = Compare(),const Allocator& = Allocator())
+	//explicit set(void) : _rbtree(rbtree()), _value_compare(value_compare()), _comp(key_compare()), _alloc(allocator_type()), _size(0), _flag(0) {} //_trollalloc(type_allocator())
     
-explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+explicit set (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
     {
         _alloc = alloc;
         _comp = comp;
@@ -258,9 +258,9 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
     }
 
-    //explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _value_compare(value_compare()), _comp(key_compare()), _rbtree(rbtree()),  _alloc(alloc) { } // _comp(comp)
+    //explicit set (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _value_compare(value_compare()), _comp(key_compare()), _rbtree(rbtree()),  _alloc(alloc) { } // _comp(comp)
     template< class InputIt >
-    map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = allocator_type()) 
+    set( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = allocator_type()) 
     {
         _comp = comp;
         _alloc = alloc;
@@ -271,13 +271,13 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
        // deleteEndNode(_end);
         insert(first, last);
-        /*: Constructs an empty map using the specified comparison object and allocator, and inserts ele-
+        /*: Constructs an empty set using the specified comparison object and allocator, and inserts ele-
         ments from the range [first, last).
         Complexity: Linear in N if the range [first, last) is already sorted using comp and otherwise N
         log N, where N is last - first.*/
         setEndNode(_end);
     }
-    map( const map& other ) 
+    set( const set& other ) 
     {
         _comp = other._comp;
         _alloc = other._alloc;
@@ -298,7 +298,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
         _rbtree.destroyNODE(node);
     }
     
-    ~map()
+    ~set()
     {
         //clear();
         _rbtree.destroyNODE(_end);
@@ -307,9 +307,9 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
         _rbtree.destroyNODE(_rbtree.TNULL);
     }
 
-//A map object of the same type (i.e., with the same template parameters, key, T, Compare and Alloc).
+//A set object of the same type (i.e., with the same template parameters, key, T, Compare and Alloc).
 // ????????????????????????
-    map& operator=( const map& other )
+    set& operator=( const set& other )
     {
         _alloc = other._alloc;
 		_value_compare = other._value_compare;
@@ -428,7 +428,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
     {
       iterator it = find(k);
       if (it == end())
-        throw std::out_of_range("ft::map::at");
+        throw std::out_of_range("ft::set::at");
       return (it->second);
     }
     
@@ -436,7 +436,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
     {
       const_iterator it = find(k);
       if (it == end())
-        throw std::out_of_range("ft::map::at");
+        throw std::out_of_range("ft::set::at");
       return (it->second);
     }
 // // modifiers:
@@ -447,14 +447,14 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
         // NodePtr tmp = _rbtree.test(_rbtree._root);
         // tmp = _rbtree.TNULL; // getNull();
         deleteEndNode(_end);
-        if(_rbtree.searchRetNode(value.first) && _rbtree.get_size())
+        if(_rbtree.searchRetNode(value) && _rbtree.get_size())
         {
-            iterator it (_rbtree.searchRetNode(value.first), _rbtree.TNULL);
+            iterator it (_rbtree.searchRetNode(value), _rbtree.TNULL);
             setEndNode(_end);
             return (ft::make_pair<iterator, bool>(it, false));
         }
         _rbtree.insertNode(value);
-        iterator it (_rbtree.searchRetNode(value.first), _rbtree.TNULL);
+        iterator it (_rbtree.searchRetNode(value), _rbtree.TNULL);
         // tmp = _rbtree.test(_rbtree._root);
         // tmp = _end;
         setEndNode(_end);
@@ -502,13 +502,13 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
         {
             while (first != last)
             {
-                NodePtr tmp = _rbtree.searchRetNode(((*first).first));
+                NodePtr tmp = _rbtree.searchRetNode(((*first)));
                 if (!tmp)
                 {
                     setEndNode(_end);
                     return;
                 }
-                _rbtree.deleteNode(_rbtree._root, (*first).first);
+                _rbtree.deleteNode(_rbtree._root, (*first));
                 _size--;
                 first++;
                 _rbtree.destroyNODE(tmp);
@@ -517,13 +517,13 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
                 // _trollalloc.destroy(tmp);
                 // _trollalloc.deallocate(tmp, 1);
             }
-            NodePtr tmp = _rbtree.searchRetNode(((*first).first));
+            NodePtr tmp = _rbtree.searchRetNode(((*first)));
             if (!tmp)
             {
                 setEndNode(_end);
                 return;
             }
-            _rbtree.deleteNode(_rbtree._root, (*first).first);
+            _rbtree.deleteNode(_rbtree._root, (*first));
             _size--;
             _rbtree.destroyNODE(tmp);
             // _alloc.destroy(tmp->_value);
@@ -536,16 +536,16 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
             last--;
             if (_flag == 1)
                 last--;
-            NodePtr tmp_first = _rbtree.searchRetNode(((*first).first));
+            NodePtr tmp_first = _rbtree.searchRetNode(((*first)));
             while (last != first)
             {
-                NodePtr tmp = _rbtree.searchRetNode(((*last).first));
+                NodePtr tmp = _rbtree.searchRetNode(((*last)));
                 if (!tmp)
                 {
                     setEndNode(_end);
                     return;
                 }
-                _rbtree.deleteNode(_rbtree._root, (*last).first);
+                _rbtree.deleteNode(_rbtree._root, (*last));
                 --last;
                 _size--;
                 _rbtree.destroyNODE(tmp);
@@ -554,7 +554,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
                 // _trollalloc.destroy(tmp);
                 // _trollalloc.deallocate(tmp, 1);
             }
-            _rbtree.deleteNode(_rbtree._root, tmp_first->_value->first);
+            _rbtree.deleteNode(_rbtree._root, *tmp_first->_value);
             _rbtree.destroyNODE(tmp_first);
             //_alloc.destroy(tmp_first->_value);
             //_alloc.deallocate(tmp_first->_value, 1);
@@ -569,13 +569,13 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
    void	erase(iterator position)
     {
         deleteEndNode(_end);
-        if (!_rbtree.searchRetNode((*position).first))
+        if (!_rbtree.searchRetNode((*position)))
         {
             setEndNode(_end);
             return;
         }
-        NodePtr tmp = _rbtree.searchRetNode((*position).first);
-        _rbtree.deleteNode(_rbtree._root, _rbtree.searchRetVal((*position).first));
+        NodePtr tmp = _rbtree.searchRetNode((*position));
+        _rbtree.deleteNode(_rbtree._root, _rbtree.searchRetVal((*position)));
         _rbtree.destroyNODE(tmp);
       //  _rbtree.get_allocator().destroy(tmp->_value);
       //  _rbtree.get_allocator().deallocate(tmp->_value, 1);
@@ -590,7 +590,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
 
 
-    // Deletes the element with the key value x from the map, if one exists. Returns 1 if x existed in the map, 0 otherwise.
+    // Deletes the element with the key value x from the set, if one exists. Returns 1 if x existed in the set, 0 otherwise.
     size_type erase(const key_type& x)
     {   
         deleteEndNode(_end);
@@ -611,9 +611,9 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
         return (1);
     }
 
-    // Providing the iterators first and last point to the same map and last is reachable from first, all elements in the range (first, last) will be deleted from the map. Returns an iterator pointing to the element following the last deleted element, or end() if there were no elements after the deleted range.
+    // Providing the iterators first and last point to the same set and last is reachable from first, all elements in the range (first, last) will be deleted from the set. Returns an iterator pointing to the element following the last deleted element, or end() if there were no elements after the deleted range.
 
-    void swap(map& other)
+    void swap(set& other)
     {
 		NodePtr tmp_tnull = _rbtree.TNULL;
 		key_compare tmp_comp = _comp;
@@ -648,7 +648,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 		// _rbtree.clear();   
                 deleteEndNode(_end);
             while (_rbtree.get_size())// && _rbtree.get_size() != 3)
-                erase(_rbtree._root->_value->first);
+                erase(*_rbtree._root->_value);
             // if (_rbtree.get_size() <= 3)
             // {
             //     if (_rbtree._root->_left)
@@ -666,7 +666,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
 		value_compare value_comp() const { return (value_compare(this->_value_compare)); }
 
-// 23.3.1.3 map operations:
+// 23.3.1.3 set operations:
 
 	iterator find (const key_type& x)
     {
@@ -703,7 +703,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
         while (first != last)
         {
-            if (!_comp((*first).first, k))
+            if (!_comp((*first), k))
                 break ;
             first++;
         }
@@ -717,7 +717,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
         while (first != last)
         {
-            if (!_comp((*first).first, k))
+            if (!_comp((*first), k))
                 break ;
             first++;
         }
@@ -731,7 +731,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
         while (first != last)
         {
-            if (_comp(k, (*first).first))
+            if (_comp(k, (*first)))
             {
                 break ;
             }
@@ -748,7 +748,7 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
         const_iterator last = this->end();
         while (first != last && len)
         {
-            if (_comp(k, (*first).first))
+            if (_comp(k, (*first)))
                 break ;
             len--;
             first++;
@@ -766,8 +766,8 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
     	return ft::pair<const_iterator, const_iterator>(lower_bound(x), upper_bound(x));
     }
 
-    //template <class Key, class T, class Compare, class Allocator>
-    friend void swap(map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y)
+    //template <class T, class Compare, class Allocator>
+    friend void swap(set<T,Compare,Allocator>& x, set<T,Compare,Allocator>& y)
     {
         x.swap(y);
     }
@@ -808,40 +808,40 @@ explicit map (const key_compare& comp = key_compare(), const allocator_type& all
 
 
 // non membres
-template <class Key, class T, class Compare, class Allocator>
-bool operator==(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y)
+template <class T, class Compare, class Allocator>
+bool operator==(const set<T,Compare,Allocator>& x, const set<T,Compare,Allocator>& y)
 {
     if(x.size() != y.size())
         return false;
     return (ft::equal(x.begin(), x.end(), y.begin()));
 }
 
-template <class Key, class T, class Compare, class Allocator>
-bool operator< (const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y)
+template <class T, class Compare, class Allocator>
+bool operator< (const set<T,Compare,Allocator>& x, const set<T,Compare,Allocator>& y)
 {
 	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 }
 
-template <class Key, class T, class Compare, class Allocator> 
-bool operator!=(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y)
+template <class T, class Compare, class Allocator> 
+bool operator!=(const set<T,Compare,Allocator>& x, const set<T,Compare,Allocator>& y)
 {
 		return !(x == y);
 }
 
-template <class Key, class T, class Compare, class Allocator>
-bool operator> (const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y)
+template <class T, class Compare, class Allocator>
+bool operator> (const set<T,Compare,Allocator>& x, const set<T,Compare,Allocator>& y)
 {
 		return y < x;
 }
 
-template <class Key, class T, class Compare, class Allocator>
-bool operator>=(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y)
+template <class T, class Compare, class Allocator>
+bool operator>=(const set<T,Compare,Allocator>& x, const set<T,Compare,Allocator>& y)
 {
 		return !(x < y);
 }
 
-template <class Key, class T, class Compare, class Allocator>
-bool operator<=(const map<Key,T,Compare,Allocator>& x, const map<Key,T,Compare,Allocator>& y)
+template <class T, class Compare, class Allocator>
+bool operator<=(const set<T,Compare,Allocator>& x, const set<T,Compare,Allocator>& y)
 {
 		return !(x > y);
 }

@@ -27,12 +27,6 @@
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define RESET   "\033[0m"
 
-#ifndef STD
-# define NAMESPACE ft
-#else
-# define NAMESPACE std
-#endif
-
 int main()
 {
     std::cout << YELLOW << "test de begin" << std::endl;

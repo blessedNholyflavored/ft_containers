@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rbt.hpp                                            :+:      :+:    :+:   */
+/*   rbtset.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lkhamlac <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 16:18:49 by lkhamlac          #+#    #+#             */
-/*   Updated: 2023/02/13 16:18:50 by lkhamlac         ###   ########.fr       */
+/*   Updated: 2023/04/07 18:46:50 by lkhamlac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RBT_HPP
-#define RBT_HPP
+#ifndef RBTSET_HPP
+#define RBTSET_HPP
 
 #include <iostream>
 #include <iomanip>      // std::setw
@@ -36,13 +36,13 @@
 
 
 
-//UNE CLASSE NODE avec les valeurs + une classe rbt qui a la root et le pointeur sur le node 
+//UNE CLASSE NODE avec les valeurs + une classe rbtset qui a la root et le pointeur sur le node 
 namespace ft
 {
     
 
-template <typename T, class U, class Key, class Compare = std::less<Key>, class Allocator = std::allocator<T> >
-class rbtree
+template <typename T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
+class rbtreeset
 {
    		typedef T 					        										value_type;
         typedef Compare             												value_compare;
@@ -85,6 +85,7 @@ class rbtree
         typedef TreeNode<value_type>	 											node;
         typedef node* 																NodePtr;
   		typedef typename allocator_type::template rebind<node>::other 				Node_allocator;
+		typedef T		Key;
     
         NodePtr _root;
         NodePtr TNULL;
@@ -99,7 +100,7 @@ class rbtree
 //-------------------------------------------------------------------------
 // constructeurs
     public:
-    rbtree() 
+    rbtreeset() 
     {
         TNULL = newnode();
         TNULL->_colour = 0;
@@ -115,7 +116,7 @@ class rbtree
         _root->_parent = NULL;
     }
 
-    ~rbtree()    
+    ~rbtreeset()    
     {
 		//destroyNODE(TNULL);
     }
@@ -124,7 +125,7 @@ class rbtree
   
   	size_type get_size(void) const 
     { 
-		// std::cout << "ma size ds rbt : " << _size << std::endl;
+		// std::cout << "ma size ds rbtset : " << _size << std::endl;
     	return (_size);
     }
 
@@ -171,9 +172,9 @@ Key	searchRetVal(const Key &key) const
 		NodePtr tmp = _root;
 		while (tmp && tmp != TNULL)
     	{
-			if (tmp->_value->first == key)
-				return tmp->_value->first;
-			if (tmp->_value->first > key)
+			if (*tmp->_value == key)
+				return *tmp->_value;
+			if (*tmp->_value > key)
 				tmp = tmp->_left;
 			else
                 tmp = tmp->_right;
@@ -191,14 +192,14 @@ Key	searchRetVal(const Key &key) const
 		NodePtr tmp = _root;
 		while (tmp != NULL && tmp->_value && tmp != TNULL)
                 {
-			if (tmp && _comp(tmp->_value->first, key))
+			if (tmp && _comp(*tmp->_value, key))
                                tmp = tmp->_right;
-			else if (tmp && _comp(key, tmp->_value->first ))
+			else if (tmp && _comp(key, *tmp->_value))
 				tmp = tmp->_left;
 			else
 				break ;
                 }
-		if (tmp && tmp->_value->first == key)
+		if (tmp && *tmp->_value == key)
 			return tmp;
 		return (0);
 	}
@@ -332,9 +333,9 @@ void	insertNode(const value_type &node)
 		while (x != NULL && x != TNULL)
 		{
 			y = x;
-			if (newN->_value && newN->_value->first == x->_value->first && _size > 0)
+			if (newN->_value && newN->_value == x->_value && _size > 0)
 				return ;
-			if (newN->_value && _comp(newN->_value->first, x->_value->first))
+			if (newN->_value && _comp(*newN->_value, *x->_value))
 			{
 				x = x->_left;
 			}
@@ -352,11 +353,11 @@ void	insertNode(const value_type &node)
 			_root->_colour = 0;
 			_root->_parent = NULL;
 		}
-		else if (newN->_value && _comp(newN->_value->first, y->_value->first))
+		else if (newN->_value && _comp(*newN->_value, *y->_value))
 		{
 			y->_left = newN;
 		}
-		else if (newN->_value && _comp(y->_value->first, newN->_value->first))
+		else if (newN->_value && _comp(*y->_value, *newN->_value))
 		{
 			y->_right = newN;
 		}
@@ -534,12 +535,12 @@ void	insertNode(const value_type &node)
 		NodePtr x;
 		tmp = searchRetNode(key);
 		NodePtr y;
-		if (tmp && tmp->_value->first == key)
+		if (tmp && *tmp->_value == key)
 		{
 			_size--;
 			y = tmp;
 			int y_color = y->_colour;
-			if (tmp->_value->first == _root->_value->first && _size == 2 && _root->_left && _root->_right)
+			if (tmp->_value == _root->_value && _size == 2 && _root->_left && _root->_right)
 			{
 				_root = tmp->_left;
 				_root->_parent = NULL;
@@ -673,16 +674,16 @@ else
 }
 
 
-void    real_print( node *ptr, int space, ft::rbtree<value_type, Key, value_compare, Allocator> test)
-{
-      if (!ptr)// || ptr == test.getNull())
-            return;
-    space += 4;
-    real_print(ptr->_right, space, test);
-    std::cout << (ptr->_colour == 0 ? "\033[90m" : "\033[31m") << std::setw(space) << ptr->_value->first << "\033[0m" << std::endl;
-    // getwchar();
-    real_print(ptr->_left, space, test);
-}
+// void    real_print( node *ptr, int space, ft::rbtreeset<value_type, Key, value_compare, Allocator> test)
+// {
+//       if (!ptr)// || ptr == test.getNull())
+//             return;
+//     space += 4;
+//     real_print(ptr->_right, space, test);
+//     std::cout << (ptr->_colour == 0 ? "\033[90m" : "\033[31m") << std::setw(space) << ptr->_value->first << "\033[0m" << std::endl;
+//     // getwchar();
+//     real_print(ptr->_left, space, test);
+// }
 
 
  void printTree() {

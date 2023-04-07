@@ -15,7 +15,7 @@
 
 namespace ft{
 template <class T1, class T2> 
-class pair
+struct pair
 {
     public:
     typedef T1 first_type;
@@ -27,7 +27,7 @@ class pair
 
     //constructeurs!!!!!!!!1
     //default
-    pair() : first(), second() { }
+    pair() : first(first_type()), second(second_type()) { }
     //copy
     template<class U, class V> 
     pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) { }

@@ -27,7 +27,7 @@ class stack
 	typedef typename Container::reference reference;
 	typedef typename Container::const_reference const_reference;
 
-    private:
+    protected:
     Container c;
 
     public:
